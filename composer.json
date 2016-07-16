@@ -1,0 +1,24 @@
+{
+    "name": "mobileia/auth",
+    "description": "Simple library for MobileIA Users",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matias Camiletti",
+            "homepage": "http://www.mobileia.com"
+        }
+    ],
+    "require": {
+        "php": "^5.5 || ^7.0",
+        "zendframework/zend-http": "^2.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MobileIA\\Auth\\": "src/"
+        }
+    }
+}
