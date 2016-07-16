@@ -1,5 +1,7 @@
 <?php
 
+namespace MobileIA\Auth;
+
 /**
  * Description of MobileiaAuth
  *
