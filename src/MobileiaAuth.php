@@ -2,6 +2,11 @@
 
 namespace MobileIA\Auth;
 
+use Zend\Http\Request;
+use Zend\Http\Client;
+use Zend\Stdlib\Parameters;
+use Zend\Json\Json;
+
 /**
  * Description of MobileiaAuth
  *
@@ -12,7 +17,7 @@ class MobileiaAuth
     /**
      * Almacena la URL base de la API de MobileIA Auth.
      */
-    const BASE_URL = 'http://192.168.0.5:8888/mia-users-api/public/';
+    const BASE_URL = 'http://localhost:8888/mia-users-api/public/';
     /**
      *
      * @var string
@@ -40,6 +45,50 @@ class MobileiaAuth
      */
     public function isValidAccessToken($access_token)
     {
+        // Creamos la peticion con los parametros necesarios
+        $request = $this->generateRequest('token/valid', array(
+            'app_id' => $this->appId,
+            'app_secret' => $this->appSecret,
+            'access_token' => $access_token
+        ));
+        // Ejecutamos la petición
+        $response = $this->dispatchRequest($request);
+        // Verificamos si se ha encontrado un error
+        if(isset($response->status) && $response->status == 422){
+            return false;
+        }
+        // El Access Token es valido
         return true;
+    }
+    /**
+     * Realiza la peticion y devuelve los parametros
+     * @param Request $request
+     * @return array
+     */
+    protected function dispatchRequest($request)
+    {
+        $client = new Client();
+        $response = $client->dispatch($request);
+        return Json::decode($response->getBody());
+    }
+    /**
+     * Genera un request con el path y los parametros
+     * @param string $path
+     * @param array $params
+     * @return Request
+     */
+    protected function generateRequest($path, $params)
+    {
+        $request = new Request();
+        $request->getHeaders()->addHeaders(array(
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ));
+        $request->setUri(self::BASE_URL . $path);
+        $request->setMethod(Request::METHOD_POST);
+        $request->setContent(Json::encode($params));
+        $request->setPost(new Parameters($params));
+        
+        return $request;
     }
 }
