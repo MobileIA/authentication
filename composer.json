@@ -20,5 +20,19 @@
         "psr-4": {
             "MobileIA\\Auth\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MobileIA\\Auth\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "format": "phpcbf --standard=psr2 src/"
+    },
+    "extra": {
+        "branch-alias": {
+            "master": "1.0"
+        }
     }
 }

@@ -12,7 +12,7 @@ class MobileiaAuth
     /**
      * Almacena la URL base de la API de MobileIA Auth.
      */
-    const BASE_URL = '';
+    const BASE_URL = 'http://192.168.0.5:8888/mia-users-api/public/';
     /**
      *
      * @var string
