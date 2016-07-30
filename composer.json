@@ -2,7 +2,7 @@
     "name": "mobileia/auth",
     "description": "Simple library for MobileIA Users",
     "version": "0.0.1",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
         {
