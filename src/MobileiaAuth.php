@@ -29,6 +29,11 @@ class MobileiaAuth
      */
     protected $appSecret;
     /**
+     * Almanena los datos del usuario que se verifico el AccessToken
+     * @var array
+     */
+    protected $current = null;
+    /**
      * 
      * @param string $app_id
      * @param string $app_secret
@@ -57,8 +62,23 @@ class MobileiaAuth
         if(isset($response->status) && $response->status == 422){
             return false;
         }
-        // El Access Token es valido
+        // El Access Token es valido Guardamos los datos del usuario
+        $this->current = $response;
+        // La respuesta es correcta
         return true;
+    }
+    /**
+     * Devuelve el UserID del ultimo accessToken validado.
+     * @return int
+     */
+    public function getCurrentUserID()
+    {
+        // Verificar si ya se valido un access_token
+        if(!is_array($this->current)){
+            return 0;
+        }
+        // Devolver el UserID del usuario que se verifico el Access Token
+        return $this->current['id'];
     }
     /**
      * Realiza la peticion y devuelve los parametros
