@@ -74,11 +74,11 @@ class MobileiaAuth
     public function getCurrentUserID()
     {
         // Verificar si ya se valido un access_token
-        if(!is_array($this->current)){
+        if(!is_array($this->current) && !is_object($this->current)){
             return 0;
         }
         // Devolver el UserID del usuario que se verifico el Access Token
-        return $this->current['id'];
+        return $this->current->id;
     }
     /**
      * Realiza la peticion y devuelve los parametros
