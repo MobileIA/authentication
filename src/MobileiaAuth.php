@@ -80,6 +80,24 @@ class MobileiaAuth
         // Devolver el UserID del usuario que se verifico el Access Token
         return $this->current->id;
     }
+    
+    public function getDevicesToken($ids)
+    {
+        // Creamos la peticion con los parametros necesarios
+        $request = $this->generateRequest('token/valid', array(
+            'app_id' => $this->appId,
+            'app_secret' => $this->appSecret,
+            'users' => implode(',', $ids)
+        ));
+        // Ejecutamos la petición
+        $response = $this->dispatchRequest($request);
+        // Verificamos si se ha encontrado un error
+        if(isset($response->status) && $response->status == 422){
+            return false;
+        }
+        // Devolvemos los datos
+        return $response;
+    }
     /**
      * Realiza la peticion y devuelve los parametros
      * @param Request $request
