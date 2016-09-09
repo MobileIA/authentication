@@ -84,7 +84,7 @@ class MobileiaAuth
     public function getDevicesToken($ids)
     {
         // Creamos la peticion con los parametros necesarios
-        $request = $this->generateRequest('token/valid', array(
+        $request = $this->generateRequest('devices', array(
             'app_id' => $this->appId,
             'app_secret' => $this->appSecret,
             'users' => implode(',', $ids)
