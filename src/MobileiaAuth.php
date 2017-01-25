@@ -105,7 +105,7 @@ class MobileiaAuth
         $request = $this->generateRequest('oauth', array(
             'grant_type' => 'password',
             'app_id' => $this->appId,
-            'app_secret' => $this->appSecret,
+            //'app_secret' => $this->appSecret,
             'email' => $email,
             'password' => $password
         ));
