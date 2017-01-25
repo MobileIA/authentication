@@ -98,6 +98,27 @@ class MobileiaAuth
         // Devolvemos los datos
         return $response;
     }
+    
+    public function authenticate($email, $password)
+    {
+        // Creamos la peticion con los parametros necesarios
+        $request = $this->generateRequest('oauth', array(
+            'grant_type' => 'password',
+            'app_id' => $this->appId,
+            'app_secret' => $this->appSecret,
+            'email' => $email,
+            'password' => $password
+        ));
+        // Ejecutamos la petición
+        $response = $this->dispatchRequest($request);
+        // Verificamos si se ha encontrado un error
+        if(isset($response->status) && ($response->status == 422 || $response->status == 401)){
+            return false;
+        }
+        // Devolvemos los datos
+        return $response;
+    }
+    
     /**
      * Realiza la peticion y devuelve los parametros
      * @param Request $request
