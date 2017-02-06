@@ -98,6 +98,23 @@ class MobileiaAuth
         // Devolvemos los datos
         return $response;
     }
+    /**
+     * Devuelve un array solo con los deviceToken de los dispositivos para enviar push.
+     * @param array $ids Array de MIA IDs para buscar dispositivos
+     * @return array
+     */
+    public function getDevicesTokenOnly($ids)
+    {
+        $devices = $this->getDevicesToken($ids);
+        // Almacena los tokens
+        $tokens = array();
+        // Recorremos los dispositivos
+        foreach($devices as $d){
+            $tokens[] = $d->device_token;
+        }
+        // Devolvemos el array
+        return $tokens;
+    }
     
     public function authenticate($email, $password)
     {
