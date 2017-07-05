@@ -56,8 +56,12 @@ class MobileiaAuth
             'app_secret' => $this->appSecret,
             'access_token' => $access_token
         ));
-        // Ejecutamos la petición
-        $response = $this->dispatchRequest($request);
+        try {
+            // Ejecutamos la petición
+            $response = $this->dispatchRequest($request);
+        } catch (\RuntimeException $exc) {
+            return false;
+        }
         // Verificamos si se ha encontrado un error
         if(isset($response->status) && $response->status == 422){
             return false;
