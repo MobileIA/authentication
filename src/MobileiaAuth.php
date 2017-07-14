@@ -148,7 +148,13 @@ class MobileiaAuth
     protected function dispatchRequest($request)
     {
         $client = new Client();
-        $response = $client->dispatch($request);
+        try {
+            $response = $client->dispatch($request);
+        } catch (\Zend\Http\Client\Adapter\Exception\RuntimeException $exc) {
+            $object = new \stdClass();
+            $object->status = 422;
+            return $object;
+        }
         return Json::decode($response->getBody());
     }
     /**
