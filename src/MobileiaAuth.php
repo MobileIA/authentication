@@ -17,7 +17,7 @@ class MobileiaAuth
     /**
      * Almacena la URL base de la API de MobileIA Auth.
      */
-    const BASE_URL = 'http://auth.mobileia.com/';
+    const BASE_URL = 'http://authentication.mobileia.com/api/';
     /**
      *
      * @var string
@@ -124,7 +124,7 @@ class MobileiaAuth
     {
         // Creamos la peticion con los parametros necesarios
         $request = $this->generateRequest('oauth', array(
-            'grant_type' => 'password',
+            'grant_type' => 'normal',
             'app_id' => $this->appId,
             //'app_secret' => $this->appSecret,
             'email' => $email,
