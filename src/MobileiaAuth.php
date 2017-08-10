@@ -133,11 +133,11 @@ class MobileiaAuth
         // Ejecutamos la petición
         $response = $this->dispatchRequest($request);
         // Verificamos si se ha encontrado un error
-        if(isset($response->status) && ($response->status == 422 || $response->status == 401)){
+        if(isset($response->status) && !$response->success){
             return false;
         }
         // Devolvemos los datos
-        return $response;
+        return $response->response;
     }
     
     /**
