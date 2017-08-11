@@ -63,7 +63,7 @@ class MobileiaAuth
             return false;
         }
         // Verificamos si se ha encontrado un error
-        if(isset($response->status) && $response->status == 422){
+        if(!$response->success){
             return false;
         }
         // El Access Token es valido Guardamos los datos del usuario
@@ -84,6 +84,27 @@ class MobileiaAuth
         // Devolver el UserID del usuario que se verifico el Access Token
         return $this->current->id;
     }
+    /**
+     * Elimina un usuario.
+     * @param int $id ID del usuario a eliminar
+     * @return boolean
+     */
+    public function removeUser($id)
+    {
+        // Creamos la peticion con los parametros necesarios
+        $request = $this->generateRequest('user/remove', array(
+            'app_id' => $this->appId,
+            'app_secret' => $this->appSecret,
+            'user_id' => $id
+        ));
+        // Ejecutamos la petición
+        $response = $this->dispatchRequest($request);
+        // Verificamos si se ha encontrado un error
+        if(!$response->success){
+            return false;
+        }
+        return true;
+    }
     
     public function getDevicesToken($ids)
     {
@@ -96,7 +117,7 @@ class MobileiaAuth
         // Ejecutamos la petición
         $response = $this->dispatchRequest($request);
         // Verificamos si se ha encontrado un error
-        if(isset($response->status) && $response->status == 422){
+        if(!$response->success){
             return false;
         }
         // Devolvemos los datos
@@ -133,7 +154,7 @@ class MobileiaAuth
         // Ejecutamos la petición
         $response = $this->dispatchRequest($request);
         // Verificamos si se ha encontrado un error
-        if(isset($response->status) && !$response->success){
+        if(!$response->success){
             return false;
         }
         // Devolvemos los datos
@@ -152,7 +173,7 @@ class MobileiaAuth
             $response = $client->dispatch($request);
         } catch (\Zend\Http\Client\Adapter\Exception\RuntimeException $exc) {
             $object = new \stdClass();
-            $object->status = 422;
+            $object->success = false;
             return $object;
         }
         return Json::decode($response->getBody());
