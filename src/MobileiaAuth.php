@@ -67,7 +67,7 @@ class MobileiaAuth
             return false;
         }
         // El Access Token es valido Guardamos los datos del usuario
-        $this->current = $response;
+        $this->current = $response->response;
         // La respuesta es correcta
         return true;
     }
