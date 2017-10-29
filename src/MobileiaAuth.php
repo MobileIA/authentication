@@ -85,6 +85,26 @@ class MobileiaAuth
         return $this->current->id;
     }
     /**
+     * Registra un usuario
+     * @param string $email
+     * @param string $password
+     * @param array $otherParams
+     * @return array
+     */
+    public function registerUser($email, $password, $otherParams = array())
+    {
+        // Creamos la peticion con los parametros necesarios
+        $request = $this->generateRequest('register', array_merge(array(
+            'register_type' => 'private',
+            'app_id' => $this->appId,
+            'app_secret' => $this->appSecret,
+            'email' => $email,
+            'password' => $password
+        ), $otherParams));
+        // Ejecutamos la petición
+        return $this->dispatchRequest($request);
+    }
+    /**
      * Elimina un usuario.
      * @param int $id ID del usuario a eliminar
      * @return boolean
