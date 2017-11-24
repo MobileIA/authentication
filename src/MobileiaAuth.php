@@ -141,7 +141,7 @@ class MobileiaAuth
             return false;
         }
         // Devolvemos los datos
-        return $response;
+        return $response->response;
     }
     /**
      * Devuelve un array solo con los deviceToken de los dispositivos para enviar push.
