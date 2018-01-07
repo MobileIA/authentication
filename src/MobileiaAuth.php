@@ -105,6 +105,29 @@ class MobileiaAuth
         return $this->dispatchRequest($request);
     }
     /**
+     * Actualiza la contraseña de un usuario
+     * @param int $id ID del usuario
+     * @param string $password Contraseña nueva
+     * @return boolean
+     */
+    public function changePasswordUser($id, $password)
+    {
+        // Creamos la peticion con los parametros necesarios
+        $request = $this->generateRequest('user/update-password', array(
+            'app_id' => $this->appId,
+            'app_secret' => $this->appSecret,
+            'user_id' => $id,
+            'password' => $password,
+        ));
+        // Ejecutamos la petición
+        $response = $this->dispatchRequest($request);
+        // Verificamos si se ha encontrado un error
+        if(!$response->success){
+            return false;
+        }
+        return true;
+    }
+    /**
      * Elimina un usuario.
      * @param int $id ID del usuario a eliminar
      * @return boolean
