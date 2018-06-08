@@ -14,6 +14,9 @@ use Zend\Json\Json;
  */
 class MobileiaAuth 
 {
+    const PLATFORM_ANDROID = 0;
+    const PLATFORM_IOS = 1;
+    
     /**
      * Almacena la URL base de la API de MobileIA Auth.
      */
@@ -149,13 +152,14 @@ class MobileiaAuth
         return true;
     }
     
-    public function getDevicesToken($ids)
+    public function getDevicesToken($ids, $platform = -1)
     {
         // Creamos la peticion con los parametros necesarios
         $request = $this->generateRequest('device/tokens', array(
             'app_id' => $this->appId,
             'app_secret' => $this->appSecret,
-            'ids' => implode(',', $ids)
+            'ids' => implode(',', $ids),
+            'platform' => $platform
         ));
         // Ejecutamos la petición
         $response = $this->dispatchRequest($request);
@@ -171,9 +175,9 @@ class MobileiaAuth
      * @param array $ids Array de MIA IDs para buscar dispositivos
      * @return array
      */
-    public function getDevicesTokenOnly($ids)
+    public function getDevicesTokenOnly($ids, $platform = -1)
     {
-        $devices = $this->getDevicesToken($ids);
+        $devices = $this->getDevicesToken($ids, $platform);
         // Almacena los tokens
         $tokens = array();
         // Recorremos los dispositivos
