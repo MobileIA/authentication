@@ -20,7 +20,7 @@ class MobileiaAuth
     /**
      * Almacena la URL base de la API de MobileIA Auth.
      */
-    const BASE_URL = 'http://authentication.mobileia.com/api/';
+    const BASE_URL = 'https://authentication.mobileia.com/api/';
     /**
      *
      * @var string
