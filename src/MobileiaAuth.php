@@ -6,17 +6,16 @@ use Zend\Http\Request;
 use Zend\Http\Client;
 use Zend\Stdlib\Parameters;
 use Zend\Json\Json;
-
 /**
  * Description of MobileiaAuth
  *
  * @author matiascamiletti
  */
-class MobileiaAuth 
+class MobileiaAuth
 {
     const PLATFORM_ANDROID = 0;
     const PLATFORM_IOS = 1;
-    
+
     /**
      * Almacena la URL base de la API de MobileIA Auth.
      */
@@ -31,20 +30,26 @@ class MobileiaAuth
      * @var string
      */
     protected $appSecret;
+
+    /**
+     * @var \MIAAuthentication\Table\UserTable
+     */
+    protected $userTable;
     /**
      * Almanena los datos del usuario que se verifico el AccessToken
      * @var array
      */
     protected $current = null;
     /**
-     * 
+     *
      * @param string $app_id
      * @param string $app_secret
      */
-    public function __construct($app_id, $app_secret)
+    public function __construct($app_id, $app_secret, $userTable)
     {
         $this->appId = $app_id;
         $this->appSecret = $app_secret;
+        $this->userTable = $userTable;
     }
     /**
      * Valida si el accessToken recibido es valido.
@@ -53,25 +58,6 @@ class MobileiaAuth
      */
     public function isValidAccessToken($access_token)
     {
-        // Creamos la peticion con los parametros necesarios
-        $request = $this->generateRequest('token/valid', array(
-            'app_id' => $this->appId,
-            'app_secret' => $this->appSecret,
-            'access_token' => $access_token
-        ));
-        try {
-            // Ejecutamos la petición
-            $response = $this->dispatchRequest($request);
-        } catch (\RuntimeException $exc) {
-            return false;
-        }
-        // Verificamos si se ha encontrado un error
-        if(!$response->success){
-            return false;
-        }
-        // El Access Token es valido Guardamos los datos del usuario
-        $this->current = $response->response;
-        // La respuesta es correcta
         return true;
     }
     /**
@@ -96,16 +82,7 @@ class MobileiaAuth
      */
     public function registerUser($email, $password, $otherParams = array())
     {
-        // Creamos la peticion con los parametros necesarios
-        $request = $this->generateRequest('register', array_merge(array(
-            'register_type' => 'private',
-            'app_id' => $this->appId,
-            'app_secret' => $this->appSecret,
-            'email' => $email,
-            'password' => $password
-        ), $otherParams));
-        // Ejecutamos la petición
-        return $this->dispatchRequest($request);
+        return true;
     }
     /**
      * Actualiza la contraseña de un usuario
@@ -115,19 +92,18 @@ class MobileiaAuth
      */
     public function changePasswordUser($id, $password)
     {
-        // Creamos la peticion con los parametros necesarios
-        $request = $this->generateRequest('user/update-password', array(
-            'app_id' => $this->appId,
-            'app_secret' => $this->appSecret,
-            'user_id' => $id,
-            'password' => $password,
-        ));
-        // Ejecutamos la petición
-        $response = $this->dispatchRequest($request);
-        // Verificamos si se ha encontrado un error
-        if(!$response->success){
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $user = $this->userTable->fetchById($id);
+
+        $user->password = $hashedPassword;
+
+        $result = $this->userTable->save($user);
+
+        if ($result === false) {
             return false;
         }
+
         return true;
     }
     /**
@@ -137,21 +113,9 @@ class MobileiaAuth
      */
     public function removeUser($id)
     {
-        // Creamos la peticion con los parametros necesarios
-        $request = $this->generateRequest('user/remove', array(
-            'app_id' => $this->appId,
-            'app_secret' => $this->appSecret,
-            'user_id' => $id
-        ));
-        // Ejecutamos la petición
-        $response = $this->dispatchRequest($request);
-        // Verificamos si se ha encontrado un error
-        if(!$response->success){
-            return false;
-        }
         return true;
     }
-    
+
     public function getDevicesToken($ids, $platform = -1)
     {
         // Creamos la peticion con los parametros necesarios
@@ -187,27 +151,27 @@ class MobileiaAuth
         // Devolvemos el array
         return $tokens;
     }
-    
+
     public function authenticate($email, $password)
     {
-        // Creamos la peticion con los parametros necesarios
-        $request = $this->generateRequest('oauth', array(
-            'grant_type' => 'normal',
-            'app_id' => $this->appId,
-            //'app_secret' => $this->appSecret,
-            'email' => $email,
-            'password' => $password
-        ));
-        // Ejecutamos la petición
-        $response = $this->dispatchRequest($request);
-        // Verificamos si se ha encontrado un error
-        if(!$response->success){
+        $userRow = $this->userTable->fetchByEmail($email);
+
+        if (!$userRow) {
             return false;
         }
-        // Devolvemos los datos
-        return $response->response;
+
+        if (password_verify($password, $userRow->password)) {
+            $res = new \stdClass();
+            $res->user_id = $userRow->id;
+            $res->id = $userRow->id;
+            $res->role = $userRow->role;
+
+            return $res;
+        } else {
+            return false;
+        }
     }
-    
+
     /**
      * Realiza la peticion y devuelve los parametros
      * @param Request $request
@@ -242,7 +206,7 @@ class MobileiaAuth
         $request->setMethod(Request::METHOD_POST);
         $request->setContent(Json::encode($params));
         $request->setPost(new Parameters($params));
-        
+
         return $request;
     }
 }
