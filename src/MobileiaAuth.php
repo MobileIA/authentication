@@ -58,6 +58,24 @@ class MobileiaAuth
      */
     public function isValidAccessToken($access_token)
     {
+        $request = $this->generateRequest('token/valid', array(
+            'app_id' => $this->appId,
+            'app_secret' => $this->appSecret,
+            'access_token' => $access_token
+        ));
+        try {
+            // Ejecutamos la petición
+            $response = $this->dispatchRequest($request);
+        } catch (\RuntimeException $exc) {
+            return false;
+        }
+        // Verificamos si se ha encontrado un error
+        if(!$response->success){
+            return false;
+        }
+        // El Access Token es valido Guardamos los datos del usuario
+        $this->current = $response->response;
+        // La respuesta es correcta
         return true;
     }
     /**
